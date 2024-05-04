@@ -176,6 +176,7 @@ class StreamlitInterface:
 
             if st.button("Очистить историю чата"):
                 st.session_state["messages"] = []
+                st.session_state["logs"] = []
 
             if st.button("Сохранить чат"):
                 filepath = self.chat_history_manager.save_chat_history(
@@ -183,8 +184,8 @@ class StreamlitInterface:
                 )
                 st.success(f"Чат сохранен в файл: {filepath}")
 
-            if st.button("Загрузить чат"):
-                st.warning("Заглушка. Не реализовано")
+            # if st.button("Загрузить чат"):
+            #     st.warning("Заглушка. Не реализовано")
 
             if "messages" not in st.session_state:
                 st.session_state["messages"] = []
@@ -200,7 +201,7 @@ class StreamlitInterface:
                     st.stop()
 
                 st.session_state.messages.append(
-                    {"role": "user", "content": f"Question: {prompt}"}
+                    {"role": "user", "content": f"{prompt}"}
                 )
                 # st.session_state.messages.append({"role": "user", "content": prompt})
                 st.chat_message("user").write(prompt)
@@ -231,6 +232,11 @@ class StreamlitInterface:
                     temperature=temperature,
                 )
 
+                st.session_state.messages.append({"role": "assistant", "content": msg})
+                with st.chat_message("assistant"):
+                    st.write(msg)
+
+                # logging
                 input_tokens = self.strategies[self.current_strategy].get_input_tokens()
                 output_tokens = self.strategies[
                     self.current_strategy
@@ -243,32 +249,35 @@ class StreamlitInterface:
                         f" Price: {total_price} $ (~{total_price*100:,.3} Rub)",
                     ]
                 )
-
                 self.log_manager.add_log(
                     f"{self.current_strategy} - {self.current_model}"
                 )
-
-                st.session_state.messages.append({"role": "assistant", "content": msg})
-                with st.chat_message("assistant"):
-                    st.write(msg)
-
-                self.log_manager.add_log(f"{self.strategies[self.current_strategy]}")
+                self.log_manager.add_log(
+                    f"input_tokens: {input_tokens},output_tokens: {output_tokens}."
+                )
+                self.log_manager.add_log(
+                    f" Price: {total_price} $ (~{total_price*100:,.3} Rub)"
+                )
                 self.log_manager.add_log("=" * 40)
                 self.log_manager.add_log(messages_with_context)
-
                 self.log_manager.add_log(
                     json.dumps(st.session_state.messages, indent=2, ensure_ascii=False)
                 )
                 self.log_manager.add_log("=" * 40)
-                self.log_manager.add_log("Ответ ассистента отправлен.")
                 self.log_manager.add_log(msg)
 
         # Логи ======================================================
         with log_tab:
-            st.write(st.session_state)
-            # st.session_state.get("log", [])
-            with st.expander("Лог системы", expanded=True):
-                st.text("\n".join(self.log_manager.get_logs()))
+            if "logs" not in st.session_state:
+                st.session_state["logs"] = []
+
+            if len(self.log_manager.get_logs()) > 0:
+                st.session_state["logs"].append(self.log_manager.get_logs())
+
+            if len(st.session_state["logs"]) > 0:
+                for item_log in st.session_state["logs"]:
+                    with st.expander("Лог системы", expanded=True):
+                        st.text("\n".join(item_log))
 
 
 if __name__ == "__main__":
