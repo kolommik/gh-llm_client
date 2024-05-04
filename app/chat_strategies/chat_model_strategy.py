@@ -9,5 +9,17 @@ class ChatModelStrategy(ABC):
         pass
 
     @abstractmethod
-    def send_message(self, messages: List[Dict[str, str]], model_name: str) -> str:
+    def get_output_max_tokens(self, model_name) -> int:
+        """Возвращает максимальное количество токенов для выбранной модели"""
+        pass
+
+    @abstractmethod
+    def send_message(
+        self,
+        system_prompt: str,
+        messages: List[Dict[str, str]],
+        model_name: str,
+        max_tokens: int,
+        temperature: float,
+    ) -> str:
         pass

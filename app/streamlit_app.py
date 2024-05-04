@@ -108,20 +108,23 @@ class StreamlitInterface:
         )
 
         self.current_strategy, self.current_model = chosen_model.split(DIVIDER)
+        self.output_max_tokens = self.strategies[
+            self.current_strategy
+        ].get_output_max_tokens(self.current_model)
 
         current_model_details = [
             item for item in MODELS_TABLE if item["name"] == self.current_model
         ]
 
-        # temperature = st.sidebar.slider(
-        #     "Temperature",
-        #     0.0,
-        #     1.0,
-        #     0.0,
-        #     help="""
-        #     Параметр, контролирующий случайность ответов модели.
-        #     Значение 0 означает, что модель будет генерировать более предсказуемый и консистентный текст.""",
-        # )
+        temperature = st.sidebar.slider(
+            "Temperature",
+            0.0,
+            1.0,
+            0.0,
+            help="""
+            Параметр, контролирующий случайность ответов модели.
+            Значение 0 означает, что модель будет генерировать более предсказуемый и консистентный текст.""",
+        )
         # max_tokens = st.sidebar.number_input(
         #     "Max tokens",
         #     min_value=1000,
@@ -219,32 +222,39 @@ class StreamlitInterface:
                 st.chat_message("user").write(prompt)
 
                 context_str = ""
-                for item in st.session_state["context"]:
-                    context_str += "LOCAL FILEPATH: " + item["path"] + "\n"
-                    context_str += "CONTENTS:\n" + item["content"] + "\n\n"
+                if "context" in st.session_state:
+                    for item in st.session_state["context"]:
+                        context_str += "LOCAL FILEPATH: " + item["path"] + "\n"
+                        context_str += "CONTENTS:\n" + item["content"] + "\n\n"
 
-                messages_with_context = [{"role": "system", "content": system_prompt}]
-                messages_with_context.append(
-                    {"role": "user", "content": f"Context:\n\n{context_str}"}
-                )
+                messages_with_context = []
+
+                if len(context_str) > 0:
+                    messages_with_context.append(
+                        {"role": "user", "content": f"Context:\n\n{context_str}"}
+                    )
+
                 messages_with_context.extend(st.session_state.messages.copy())
 
-                msg = self.strategies[self.current_strategy].send_message(
-                    messages_with_context, self.current_model
+                msg, resp = self.strategies[self.current_strategy].send_message(
+                    system_prompt=system_prompt,
+                    messages=messages_with_context,
+                    model_name=self.current_model,
+                    max_tokens=self.output_max_tokens,
+                    temperature=temperature,
                 )
+
+                st.write(resp)
 
                 self.log_manager.add_log(
                     f"{self.current_strategy} - {self.current_model}"
                 )
-                self.log_manager.add_log(f"{self.strategies[self.current_strategy]}")
-                # st.write(self.current_strategy)
-                # st.write(self.current_model)
-                # st.write(msg)
 
                 st.session_state.messages.append({"role": "assistant", "content": msg})
                 with st.chat_message("assistant"):
                     st.write(msg)
 
+                self.log_manager.add_log(f"{self.strategies[self.current_strategy]}")
                 self.log_manager.add_log("=" * 40)
                 self.log_manager.add_log(messages_with_context)
                 # self.log_manager.add_log(response)
