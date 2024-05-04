@@ -230,13 +230,16 @@ class StreamlitInterface:
                 messages_with_context = []
 
                 if len(context_str) > 0:
-                    messages_with_context.append(
-                        {"role": "user", "content": f"Context:\n\n{context_str}"}
+                    messages_with_context.extend(
+                        [
+                            {"role": "user", "content": f"Context:\n\n{context_str}"},
+                            {"role": "assistant", "content": "Ok, I got it!"},
+                        ]
                     )
 
                 messages_with_context.extend(st.session_state.messages.copy())
 
-                msg, resp = self.strategies[self.current_strategy].send_message(
+                msg = self.strategies[self.current_strategy].send_message(
                     system_prompt=system_prompt,
                     messages=messages_with_context,
                     model_name=self.current_model,
@@ -244,7 +247,18 @@ class StreamlitInterface:
                     temperature=temperature,
                 )
 
-                st.write(resp)
+                # input_tokens = self.strategies[self.current_strategy].get_input_tokens()
+                # output_tokens = self.strategies[
+                #     self.current_strategy
+                # ].get_output_tokens()
+                # total_price = self.strategies[self.current_strategy].get_full_price()
+
+                # st.write(
+                #     [
+                #         f"input_tokens: {input_tokens},output_tokens: {output_tokens}.",
+                #         f" Price: {total_price} $ (~{total_price*100:,.3} Rub)",
+                #     ]
+                # )
 
                 self.log_manager.add_log(
                     f"{self.current_strategy} - {self.current_model}"
@@ -257,8 +271,6 @@ class StreamlitInterface:
                 self.log_manager.add_log(f"{self.strategies[self.current_strategy]}")
                 self.log_manager.add_log("=" * 40)
                 self.log_manager.add_log(messages_with_context)
-                # self.log_manager.add_log(response)
-                # self.log_manager.add_log(response.usage)
 
                 self.log_manager.add_log(
                     json.dumps(st.session_state.messages, indent=2, ensure_ascii=False)

@@ -14,6 +14,21 @@ class ChatModelStrategy(ABC):
         pass
 
     @abstractmethod
+    def get_input_tokens(self) -> int:
+        """Возвращает использованное количество токенов для ввода"""
+        pass
+
+    @abstractmethod
+    def get_output_tokens(self) -> int:
+        """Возвращает использованное количество токенов для вывода"""
+        pass
+
+    @abstractmethod
+    def get_full_price(self) -> float:
+        """Возвращает стоимость диалога"""
+        pass
+
+    @abstractmethod
     def send_message(
         self,
         system_prompt: str,
