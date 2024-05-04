@@ -9,7 +9,6 @@ from managers.settings_manager import SettingsManager
 from managers.chat_history_manager import ChatHistoryManager
 from chat_strategies.openai_strategy import OpenAIChatStrategy
 from chat_strategies.anthropic_strategy import AnthropicChatStrategy
-from utils.constants import MODELS_TABLE
 
 
 DIVIDER = ": "
@@ -112,10 +111,6 @@ class StreamlitInterface:
             self.current_strategy
         ].get_output_max_tokens(self.current_model)
 
-        current_model_details = [
-            item for item in MODELS_TABLE if item["name"] == self.current_model
-        ]
-
         temperature = st.sidebar.slider(
             "Temperature",
             0.0,
@@ -125,31 +120,20 @@ class StreamlitInterface:
             Параметр, контролирующий случайность ответов модели.
             Значение 0 означает, что модель будет генерировать более предсказуемый и консистентный текст.""",
         )
-        # max_tokens = st.sidebar.number_input(
-        #     "Max tokens",
-        #     min_value=1000,
-        #     max_value=MAX_TOKENS,
-        #     value=MAX_TOKENS,
-        #     step=50,
-        #     help="""
-        #     Максимальное количество токенов, которое может быть сгенерировано в ответе.
-        #     Это помогает ограничить длину вывода.""",
-        # )
+        max_tokens = st.sidebar.number_input(
+            "Max tokens",
+            min_value=1000,
+            max_value=self.output_max_tokens,
+            value=self.output_max_tokens,
+            step=100,
+            help="""
+            Максимальное количество токенов, которое может быть сгенерировано в ответе.
+            Это помогает ограничить длину вывода.""",
+        )
 
         # ===========================================================
         # Основной интерфейс
-        context_tab, chat_tab, log_tab, model_tab = st.tabs(
-            ["Контекст", "💬 Чат", "Лог", "LLM Модель"]
-        )
-
-        with model_tab:
-            st.table(MODELS_TABLE)
-
-            st.write("---")
-
-            if current_model_details:
-                with st.expander("Current model", expanded=True):
-                    st.write(current_model_details)
+        context_tab, chat_tab, log_tab = st.tabs(["Контекст", "💬 Чат", "Лог"])
 
         # Контекст ==================================================
         with context_tab:
@@ -243,22 +227,22 @@ class StreamlitInterface:
                     system_prompt=system_prompt,
                     messages=messages_with_context,
                     model_name=self.current_model,
-                    max_tokens=self.output_max_tokens,
+                    max_tokens=max_tokens,
                     temperature=temperature,
                 )
 
-                # input_tokens = self.strategies[self.current_strategy].get_input_tokens()
-                # output_tokens = self.strategies[
-                #     self.current_strategy
-                # ].get_output_tokens()
-                # total_price = self.strategies[self.current_strategy].get_full_price()
+                input_tokens = self.strategies[self.current_strategy].get_input_tokens()
+                output_tokens = self.strategies[
+                    self.current_strategy
+                ].get_output_tokens()
+                total_price = self.strategies[self.current_strategy].get_full_price()
 
-                # st.write(
-                #     [
-                #         f"input_tokens: {input_tokens},output_tokens: {output_tokens}.",
-                #         f" Price: {total_price} $ (~{total_price*100:,.3} Rub)",
-                #     ]
-                # )
+                st.write(
+                    [
+                        f"input_tokens: {input_tokens},output_tokens: {output_tokens}.",
+                        f" Price: {total_price} $ (~{total_price*100:,.3} Rub)",
+                    ]
+                )
 
                 self.log_manager.add_log(
                     f"{self.current_strategy} - {self.current_model}"
