@@ -71,8 +71,8 @@ class StreamlitInterface:
 
 if __name__ == "__main__":
     load_dotenv(find_dotenv())  # read local.env file
-    openai_api_key = os.environ["OPENAI_API_KEY"]
-    anthropic_api_key = os.environ["ANTHROPIC_API_KEY"]
+    openai_api_key = os.environ.get("OPENAI_API_KEY", None)
+    anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", None)
 
     settings_manager = SettingsManager()
     log_manager = LogManager()
