@@ -1,3 +1,8 @@
+"""
+Implements the AnthropicChatStrategy, a concrete strategy for interacting with the Anthropic chat model API.
+This strategy adheres to the ChatModelStrategy interface and encapsulates Anthropic-specific functionality.
+"""
+
 from anthropic import Anthropic
 from chat_strategies.chat_model_strategy import ChatModelStrategy
 from chat_strategies.model import Model

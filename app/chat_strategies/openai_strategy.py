@@ -1,3 +1,8 @@
+"""
+Implements the OpenAIChatStrategy, a concrete strategy for interacting with the OpenAI chat model API.
+This strategy adheres to the ChatModelStrategy interface and encapsulates OpenAI-specific functionality.
+"""
+
 from openai import OpenAI
 from chat_strategies.model import Model
 from chat_strategies.chat_model_strategy import ChatModelStrategy
