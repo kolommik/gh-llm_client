@@ -91,7 +91,7 @@ class ChatTab:
             st.write(
                 [
                     f"input_tokens: {input_tokens},output_tokens: {output_tokens}.",
-                    f" Price: {total_price} $ (~{total_price*100:,.3} Rub)",
+                    f" Price: {total_price} $ (~{total_price*100:.2f} Rub)",
                 ]
             )
             self.log_manager.add_log(f"{self.current_strategy} - {self.current_model}")

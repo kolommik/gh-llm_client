@@ -8,7 +8,7 @@ class LogTab:
     def render(self):
         if "total_cost" in st.session_state:
             st.write(
-                f" Total cost: {st.session_state['total_cost']} $ (~{st.session_state['total_cost']*100:,.3} Rub)",
+                f" Total cost: {st.session_state['total_cost']} $ (~{st.session_state['total_cost']*100:.2f} Rub)",
             )
 
         if "logs" not in st.session_state:
