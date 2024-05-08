@@ -15,26 +15,23 @@ def num_tokens_from_content(content: str, model: str = "gpt-3.5-turbo") -> int:
 
 
 class FileManager:
-    def __init__(self, folder_path, target_extensions, always_include, excluded_dirs):
-        self.folder_path = folder_path
-        self.target_extensions = target_extensions.split(", ")
-        self.always_include = always_include.split(", ")
-        self.excluded_dirs = excluded_dirs.split(", ")
+    def __init__(self):
+        pass
 
-    def _prepare_files_list(self):
+    def _prepare_files_list(
+        self, folder_path, target_extensions, always_include, excluded_dirs
+    ):
+
         files_list = []
-        for subdir, dirs, files in os.walk(self.folder_path):
-            dirs[:] = [d for d in dirs if d not in self.excluded_dirs]
+        for subdir, dirs, files in os.walk(folder_path):
+            dirs[:] = [d for d in dirs if d not in excluded_dirs]
             for file in files:
                 full_path = os.path.join(subdir, file)
-                if (
-                    file.endswith(tuple(self.target_extensions))
-                    or file in self.always_include
-                ):
+                if file.endswith(tuple(target_extensions)) or file in always_include:
                     with open(full_path, "r", encoding="utf-8") as f:
                         files_list.append(
                             {
-                                "path": os.path.relpath(full_path, self.folder_path),
+                                "path": os.path.relpath(full_path, folder_path),
                                 "filename": file,
                                 "content": f.read(),
                             }
@@ -74,12 +71,20 @@ class FileManager:
 
         return files_data
 
-    def read_files(self) -> List[Dict[str, str]]:
+    def read_files(
+        self, folder_path, target_extensions, always_include, excluded_dirs
+    ) -> List[Dict[str, str]]:
         """
         Read files from a given directory and its subdirectories,
         filtering by file extensions, including specified always include files,
         and excluding specified directories.
         """
-        files_list = self._prepare_files_list()
+        target_extensions = target_extensions.split(", ")
+        always_include = always_include.split(", ")
+        excluded_dirs = excluded_dirs.split(", ")
+
+        files_list = self._prepare_files_list(
+            folder_path, target_extensions, always_include, excluded_dirs
+        )
         files_list = self._augment_files_data(files_list)
         return files_list

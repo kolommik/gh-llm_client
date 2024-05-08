@@ -1,22 +1,24 @@
-import streamlit as st
+"""
+Implements the context tab in the Streamlit app, managing context files and displaying context-related information.
+"""
 
-from managers.file_manager import FileManager
+import streamlit as st
 
 
 class ContextTab:
-    def __init__(self, settings):
+    def __init__(self, settings, file_manager):
         self.settings = settings
+        self.file_manager = file_manager
 
     def render(self):
         if st.button("Обновить контекст"):
-            file_manager = FileManager(
+            files = self.file_manager.read_files(
                 folder_path=self.settings["folder_path"],
                 target_extensions=self.settings["target_extensions"],
                 always_include=self.settings["always_include"],
                 excluded_dirs=self.settings["excluded_dirs"],
             )
 
-            files = file_manager.read_files()
             st.session_state["context"] = files
 
         if "context" in st.session_state:

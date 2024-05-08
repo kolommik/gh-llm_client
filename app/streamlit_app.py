@@ -7,6 +7,7 @@ from interfaces.log_tab import LogTab
 from interfaces.context_tab import ContextTab
 from interfaces.chat_tab import ChatTab
 from managers.log_manager import LogManager
+from managers.file_manager import FileManager
 from managers.settings_manager import SettingsManager
 from managers.chat_history_manager import ChatHistoryManager
 from chat_strategies.openai_strategy import OpenAIChatStrategy
@@ -18,6 +19,7 @@ class StreamlitInterface:
         self,
         settings_manager,
         log_manager,
+        file_manager,
         chat_history_manager,
         openai_api_key=None,
         anthropic_api_key=None,
@@ -25,6 +27,7 @@ class StreamlitInterface:
         self.settings_manager = settings_manager
         self.log_manager = log_manager
         self.chat_history_manager = chat_history_manager
+        self.file_manager = file_manager
 
         # TODO - обработка ошибки если список моделей пуст, т.к. нет env ключей
         self.strategies = {
@@ -50,7 +53,7 @@ class StreamlitInterface:
         tab1, tab2, tab3 = st.tabs(["📚 Контекст", "💬 Чат", "📜 Лог"])
 
         with tab1:
-            ContextTab(settings).render()
+            ContextTab(settings, self.file_manager).render()
 
         # Чат =======================================================
         with tab2:
@@ -77,10 +80,12 @@ if __name__ == "__main__":
     settings_manager = SettingsManager()
     log_manager = LogManager()
     chat_history_manager = ChatHistoryManager()
+    file_manager = FileManager()
 
     app = StreamlitInterface(
         settings_manager,
         log_manager,
+        file_manager,
         chat_history_manager,
         openai_api_key,
         anthropic_api_key,
