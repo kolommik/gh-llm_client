@@ -84,7 +84,7 @@ class ChatTab:
             total_price = self.strategies[self.current_strategy].get_full_price()
 
             if "total_cost" not in st.session_state:
-                st.session_state["total_cost"] = 0.0
+                st.session_state["total_cost"] = total_price
             else:
                 st.session_state["total_cost"] += total_price
 
