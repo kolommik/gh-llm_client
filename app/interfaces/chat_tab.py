@@ -27,6 +27,7 @@ class ChatTab:
         if st.button("Очистить историю чата"):
             st.session_state["messages"] = []
             st.session_state["logs"] = []
+            st.session_state["total_cost"] = 0.0
 
         if st.button("Сохранить чат"):
             filepath = self.chat_history_manager.save_chat_history(
@@ -81,6 +82,11 @@ class ChatTab:
             input_tokens = self.strategies[self.current_strategy].get_input_tokens()
             output_tokens = self.strategies[self.current_strategy].get_output_tokens()
             total_price = self.strategies[self.current_strategy].get_full_price()
+
+            if "total_cost" not in st.session_state:
+                st.session_state["total_cost"] = 0.0
+            else:
+                st.session_state["total_cost"] += total_price
 
             st.write(
                 [

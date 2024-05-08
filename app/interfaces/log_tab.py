@@ -6,6 +6,11 @@ class LogTab:
         self.log_manager = log_manager
 
     def render(self):
+        if "total_cost" in st.session_state:
+            st.write(
+                f" Total cost: {st.session_state['total_cost']} $ (~{st.session_state['total_cost']*100:,.3} Rub)",
+            )
+
         if "logs" not in st.session_state:
             st.session_state["logs"] = []
 
@@ -14,5 +19,5 @@ class LogTab:
 
         if len(st.session_state["logs"]) > 0:
             for item_log in st.session_state["logs"]:
-                with st.expander("Лог системы", expanded=True):
+                with st.expander(item_log[0], expanded=True):
                     st.text("\n".join(item_log))
