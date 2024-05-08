@@ -24,12 +24,17 @@ class ContextTab:
                 "Total tokens:",
                 sum([x["tokens"] for x in st.session_state["context"]]),
             )
+            st.write(
+                "Total lines:",
+                sum([x["lines"] for x in st.session_state["context"]]),
+            )
             st.table(
                 [
                     {
                         "path": item["path"],
                         "tokens": item["tokens"],
                         "length (symbols)": item["length"],
+                        "lines": item["lines"],
                     }
                     for item in st.session_state["context"]
                 ]

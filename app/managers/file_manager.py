@@ -67,9 +67,10 @@ class FileManager:
         """
         for file_dict in files_data:
             content = file_dict["content"]
-            file_dict["length"] = len(content)  # Number of characters
-            file_dict["words"] = len(content.split())  # Number of words
-            file_dict["tokens"] = num_tokens_from_content(content)  # Number of tokens
+            file_dict["length"] = len(content)
+            file_dict["words"] = len(content.split())
+            file_dict["tokens"] = num_tokens_from_content(content)
+            file_dict["lines"] = (content.count("\n") + 1) if len(content) > 0 else 0
 
         return files_data
 
