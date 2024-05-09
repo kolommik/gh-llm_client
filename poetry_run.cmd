@@ -1,1 +1,1 @@
-poetry run streamlit run app/streamlit_app.py
+poetry run streamlit run app/main.py

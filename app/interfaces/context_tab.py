@@ -7,8 +7,8 @@ import pandas as pd
 
 
 class ContextTab:
-    def __init__(self, settings, file_manager):
-        self.settings = settings
+    def __init__(self, file_manager):
+        self.settings = st.session_state["settings"]
         self.file_manager = file_manager
 
     def update_context(self):

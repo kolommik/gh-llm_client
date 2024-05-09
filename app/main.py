@@ -45,7 +45,7 @@ class StreamlitInterface:
         st.set_page_config(page_title="Chat App", layout="wide")
 
         # Settings sidebar ==========================================
-        settings, self.current_strategy, self.current_model, temperature, max_tokens = (
+        self.current_strategy, self.current_model, temperature, max_tokens = (
             SettingsSidebar(self.settings_manager, self.strategies).render()
         )
 
@@ -53,7 +53,7 @@ class StreamlitInterface:
         tab1, tab2, tab3 = st.tabs(["📚 Контекст", "💬 Чат", "📜 Лог"])
 
         with tab1:
-            ContextTab(settings, self.file_manager).render()
+            ContextTab(self.file_manager).render()
 
         # Чат =======================================================
         with tab2:
@@ -61,7 +61,6 @@ class StreamlitInterface:
                 self.strategies,
                 self.current_strategy,
                 self.current_model,
-                settings,
                 temperature,
                 max_tokens,
                 self.log_manager,

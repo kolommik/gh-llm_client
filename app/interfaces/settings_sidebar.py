@@ -1,4 +1,5 @@
 import streamlit as st
+import json
 
 DIVIDER = ": "
 
@@ -7,61 +8,99 @@ class SettingsSidebar:
     def __init__(self, settings_manager, strategies):
         self.settings_manager = settings_manager
         self.strategies = strategies
+        self.models_list = self._create_models_list()
 
-        self.models_list = []
+    def _create_models_list(self):
+        models_list = []
         for strategy_name, strategy in self.strategies.items():
             if strategy:
-                self.models_list.extend(
+                models_list.extend(
                     [
                         f"{strategy_name}{DIVIDER}{model}"
                         for model in strategy.get_models()
                     ]
                 )
+        return models_list
+
+    def _handle_settings(self):
+        if "settings" not in st.session_state:
+            st.session_state["settings"] = self.settings_manager.load_settings()
+
+        if st.sidebar.button("Сохранить настройки по умолчанию"):
+            new_settings = {
+                "folder_path": st.session_state.settings["folder_path"],
+                "target_extensions": st.session_state.settings["target_extensions"],
+                "always_include": st.session_state.settings["always_include"],
+                "excluded_dirs": st.session_state.settings["excluded_dirs"],
+                "system_prompt": st.session_state.settings["system_prompt"],
+            }
+            self.settings_manager.save_settings(new_settings)
+            st.sidebar.success("Настройки сохранены!")
+
+            # Предложить скачать файл с настройками
+            settings_json = json.dumps(new_settings, ensure_ascii=False, indent=2)
+            st.sidebar.download_button(
+                label="Скачать файл настроек",
+                data=settings_json,
+                file_name="settings.json",
+                mime="application/json",
+            )
+
+        if st.sidebar.button("Загрузить настройки по умолчанию"):
+            st.session_state["settings"] = self.settings_manager.load_settings()
+            st.sidebar.success("Настройки загружены!")
+
+        settings_file = st.sidebar.file_uploader(
+            "Выберите файл настроек",
+            type=["json"],
+            help="Загрузить локальный файл JSON с настройками",
+        )
+
+        if settings_file is not None:
+            st.session_state["settings"] = (
+                self.settings_manager.load_settings_from_file(settings_file)
+            )
+            st.sidebar.success(f"Настройки загружены из файла {settings_file.name}!")
 
     def render(self):
         st.sidebar.title("Настройки")
+        self._handle_settings()
 
-        settings = self.settings_manager.load_settings()
+        unique_key = hash(json.dumps(st.session_state["settings"], sort_keys=True))
 
-        folder_path = st.sidebar.text_input(
+        # -----------------------------------------------
+        st.sidebar.write("---")
+
+        st.session_state.settings["folder_path"] = st.sidebar.text_input(
             "Folder path",
-            settings.get("folder_path", ""),
+            st.session_state.settings.get("folder_path", ""),
+            key=f"folder_path_{unique_key}",
             help="Введите путь к директории",
         )
-        target_extensions = st.sidebar.text_input(
+        st.session_state.settings["target_extensions"] = st.sidebar.text_input(
             "Target extensions",
-            settings.get("target_extensions", ""),
+            st.session_state.settings.get("target_extensions", ""),
+            key=f"target_extensions_{unique_key}",
             help="Введите расширения через запятую, например: .py,.txt,.md",
         )
-        always_include = st.sidebar.text_input(
+        st.session_state.settings["always_include"] = st.sidebar.text_input(
             "Always include files",
-            settings.get("always_include", ""),
+            st.session_state.settings.get("always_include", ""),
+            key=f"always_include_{unique_key}",
             help="Введите имена файлов через запятую",
         )
-        excluded_dirs = st.sidebar.text_input(
+        st.session_state.settings["excluded_dirs"] = st.sidebar.text_input(
             "Excluded directories",
-            settings.get("excluded_dirs", ""),
+            st.session_state.settings.get("excluded_dirs", ""),
+            key=f"excluded_dirs_{unique_key}",
             help="Введите директории через запятую",
         )
-        system_prompt = st.sidebar.text_area(
-            "System prompt", settings.get("system_prompt", "")
+        st.session_state.settings["system_prompt"] = st.sidebar.text_area(
+            "System prompt",
+            st.session_state.settings.get("system_prompt", ""),
+            key=f"system_prompt_{unique_key}",
+            help="Системная подсказка для LLM",
         )
-
-        if st.sidebar.button("Сохранить настройки"):
-            new_settings = {
-                "folder_path": folder_path,
-                "target_extensions": target_extensions,
-                "always_include": always_include,
-                "excluded_dirs": excluded_dirs,
-                "system_prompt": system_prompt,
-            }
-            self.settings_manager.save_settings(new_settings)
-            st.success("Настройки сохранены!")
-            settings = new_settings
-
-        if st.sidebar.button("Загрузить настройки"):
-            settings = self.settings_manager.load_settings()
-            st.success("Настройки загружены!")
 
         st.sidebar.write("---")
 
@@ -96,4 +135,4 @@ class SettingsSidebar:
             Это помогает ограничить длину вывода.""",
         )
 
-        return settings, current_strategy, current_model, temperature, max_tokens
+        return current_strategy, current_model, temperature, max_tokens

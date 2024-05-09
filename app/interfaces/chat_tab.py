@@ -8,7 +8,6 @@ class ChatTab:
         strategies,
         current_strategy,
         current_model,
-        settings,
         temperature,
         max_tokens,
         log_manager,
@@ -17,7 +16,7 @@ class ChatTab:
         self.strategies = strategies
         self.current_strategy = current_strategy
         self.current_model = current_model
-        self.settings = settings
+        self.settings = st.session_state["settings"]
         self.temperature = temperature
         self.max_tokens = max_tokens
         self.log_manager = log_manager
