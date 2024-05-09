@@ -11,22 +11,39 @@ class ContextTab:
         self.settings = settings
         self.file_manager = file_manager
 
+    def update_context(self):
+        files = self.file_manager.read_files(
+            folder_path=self.settings["folder_path"],
+            target_extensions=self.settings["target_extensions"],
+            always_include=self.settings["always_include"],
+            excluded_dirs=self.settings["excluded_dirs"],
+        )
+
+        st.session_state["full_context"] = files
+        st.session_state["context"] = st.session_state["full_context"]
+
+        if "update_context_key" not in st.session_state:
+            st.session_state["update_context_key"] = 0
+        else:
+            st.session_state["update_context_key"] += 1
+
+    def display_files_info(self):
+        st.write(
+            "Total files:",
+            sum([1 for _ in st.session_state["context"]]),
+        )
+        st.write(
+            "Total tokens:",
+            sum([x["tokens"] for x in st.session_state["context"]]),
+        )
+        st.write(
+            "Total lines:",
+            sum([x["lines"] for x in st.session_state["context"]]),
+        )
+
     def render(self):
         if st.button("Обновить контекст"):
-            files = self.file_manager.read_files(
-                folder_path=self.settings["folder_path"],
-                target_extensions=self.settings["target_extensions"],
-                always_include=self.settings["always_include"],
-                excluded_dirs=self.settings["excluded_dirs"],
-            )
-
-            st.session_state["full_context"] = files
-            st.session_state["context"] = st.session_state["full_context"]
-
-            if "update_context_key" not in st.session_state:
-                st.session_state["update_context_key"] = 0
-            else:
-                st.session_state["update_context_key"] += 1
+            self.update_context()
 
         if "context" in st.session_state:
             update_context_key = (
@@ -61,18 +78,7 @@ class ContextTab:
                 if item["path"] in enabled_paths
             ]
 
-            st.write(
-                "Total files:",
-                sum([1 for _ in st.session_state["context"]]),
-            )
-            st.write(
-                "Total tokens:",
-                sum([x["tokens"] for x in st.session_state["context"]]),
-            )
-            st.write(
-                "Total lines:",
-                sum([x["lines"] for x in st.session_state["context"]]),
-            )
+            self.display_files_info()
 
         with st.expander("System prompt", expanded=False):
             st.text(self.settings["system_prompt"])
