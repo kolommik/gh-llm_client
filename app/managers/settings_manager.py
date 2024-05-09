@@ -1,3 +1,7 @@
+"""
+Handles the loading and saving of application settings, as well as providing default settings when necessary.
+"""
+
 import os
 import json
 

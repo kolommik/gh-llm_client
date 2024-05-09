@@ -1,3 +1,7 @@
+"""
+Manages the logging functionality, allowing the addition and retrieval of log messages with timestamps.
+"""
+
 import datetime
 
 

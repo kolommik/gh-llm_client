@@ -1,3 +1,7 @@
+"""
+Implements the log tab in the Streamlit app, displaying logs and total costs.
+"""
+
 import streamlit as st
 
 

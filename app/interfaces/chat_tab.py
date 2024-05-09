@@ -1,3 +1,8 @@
+"""
+Implements the chat tab in the Streamlit app, handling user input, displaying chat messages,
+and interacting with the selected chat strategy.
+"""
+
 import streamlit as st
 import json
 

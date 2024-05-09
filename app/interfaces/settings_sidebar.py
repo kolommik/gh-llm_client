@@ -1,3 +1,8 @@
+"""
+Implements the settings sidebar in the Streamlit app, allowing users to modify and save settings,
+as well as select the desired chat model and its parameters.
+"""
+
 import streamlit as st
 import json
 

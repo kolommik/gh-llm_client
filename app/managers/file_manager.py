@@ -1,3 +1,8 @@
+"""
+Handles file-related operations, such as reading files from a directory, filtering by extensions,
+and calculating token counts for the contents of each file.
+"""
+
 import os
 from typing import List, Dict, Any
 import tiktoken

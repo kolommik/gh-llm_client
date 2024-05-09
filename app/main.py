@@ -1,3 +1,8 @@
+"""
+Main entry point for the Streamlit application.
+Initializes the necessary managers and runs the StreamlitInterface.
+"""
+
 import os
 import streamlit as st
 from dotenv import load_dotenv, find_dotenv
@@ -55,7 +60,7 @@ class StreamlitInterface:
         with tab1:
             ContextTab(self.file_manager).render()
 
-        # Чат =======================================================
+        # Chat =======================================================
         with tab2:
             ChatTab(
                 self.strategies,

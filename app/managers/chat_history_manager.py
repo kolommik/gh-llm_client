@@ -1,6 +1,9 @@
+"""
+Manages the saving of chat histories.
+"""
+
 import os
 from datetime import datetime
-from markdown import markdown
 
 
 class ChatHistoryManager:
@@ -18,10 +21,6 @@ class ChatHistoryManager:
             file.write(self._convert_messages_to_md(messages))
         return filepath
 
-    # TODO: Add support for loading chat histories
-    def load_chat_history(self, filepath):
-        pass
-
     def _convert_messages_to_md(self, messages):
         md_content = (
             f"# Chat History {datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}\n\n"
@@ -32,6 +31,3 @@ class ChatHistoryManager:
             md_content += "  \n\n---\n\n"
 
         return md_content
-
-    def _convert_messages_to_html(self, md_text: str):
-        return markdown(md_text)
