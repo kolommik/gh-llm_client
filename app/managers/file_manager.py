@@ -79,6 +79,7 @@ class FileManager:
         filtering by file extensions, including specified always include files,
         and excluding specified directories.
         """
+        folder_path = os.path.abspath(folder_path)
         target_extensions = target_extensions.split(", ")
         always_include = always_include.split(", ")
         excluded_dirs = excluded_dirs.split(", ")
