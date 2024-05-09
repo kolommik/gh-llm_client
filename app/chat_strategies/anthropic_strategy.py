@@ -3,6 +3,7 @@ Implements the AnthropicChatStrategy, a concrete strategy for interacting with t
 This strategy adheres to the ChatModelStrategy interface and encapsulates Anthropic-specific functionality.
 """
 
+from typing import List, Dict
 from anthropic import Anthropic
 from chat_strategies.chat_model_strategy import ChatModelStrategy
 from chat_strategies.model import Model
@@ -10,7 +11,7 @@ from chat_strategies.model import Model
 
 # https://docs.anthropic.com/claude/docs/models-overview
 class AnthropicChatStrategy(ChatModelStrategy):
-    def __init__(self, api_key):
+    def __init__(self, api_key: str):
         self.api_key = api_key
         self.models = [
             Model(
@@ -37,16 +38,16 @@ class AnthropicChatStrategy(ChatModelStrategy):
         self.output_tokens = 0
         self.model = None
 
-    def get_models(self):
+    def get_models(self) -> List[str]:
         return [model.name for model in self.models]
 
-    def get_output_max_tokens(self, model_name) -> int:
+    def get_output_max_tokens(self, model_name: str) -> int:
         return self.models[self.get_models().index(model_name)].output_max_tokens
 
-    def get_input_tokens(self):
+    def get_input_tokens(self) -> int:
         return self.input_tokens
 
-    def get_output_tokens(self):
+    def get_output_tokens(self) -> int:
         return self.output_tokens
 
     def get_full_price(self) -> float:
@@ -63,7 +64,12 @@ class AnthropicChatStrategy(ChatModelStrategy):
         return inputs + outputs
 
     def send_message(
-        self, system_prompt, messages, model_name, max_tokens, temperature=0
+        self,
+        system_prompt: str,
+        messages: List[Dict[str, str]],
+        model_name: str,
+        max_tokens: int,
+        temperature: float = 0,
     ) -> str:
 
         self.model = model_name

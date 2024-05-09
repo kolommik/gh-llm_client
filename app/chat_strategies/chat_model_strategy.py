@@ -25,7 +25,7 @@ class ChatModelStrategy(ABC):
         pass
 
     @abstractmethod
-    def get_output_max_tokens(self, model_name) -> int:
+    def get_output_max_tokens(self, model_name: str) -> int:
         """Returns maximum output tokens limit"""
         pass
 

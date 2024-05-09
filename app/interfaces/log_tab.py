@@ -4,9 +4,11 @@ Implements the log tab in the Streamlit app, displaying logs and total costs.
 
 import streamlit as st
 
+from managers.log_manager import LogManager
+
 
 class LogTab:
-    def __init__(self, log_manager):
+    def __init__(self, log_manager: LogManager):
         self.log_manager = log_manager
 
     def render(self):

@@ -6,7 +6,9 @@ This class is used by the chat model strategies to store and access model-specif
 
 
 class Model:
-    def __init__(self, name, output_max_tokens, price_input, price_output):
+    def __init__(
+        self, name: str, output_max_tokens: int, price_input: float, price_output: float
+    ):
         self.name = name
         self.output_max_tokens = output_max_tokens
         self.price_input = price_input

@@ -3,20 +3,25 @@ Implements the chat tab in the Streamlit app, handling user input, displaying ch
 and interacting with the selected chat strategy.
 """
 
+from typing import Dict
 import streamlit as st
 import json
+
+from chat_strategies.chat_model_strategy import ChatModelStrategy
+from managers.chat_history_manager import ChatHistoryManager
+from managers.log_manager import LogManager
 
 
 class ChatTab:
     def __init__(
         self,
-        strategies,
-        current_strategy,
-        current_model,
-        temperature,
-        max_tokens,
-        log_manager,
-        chat_history_manager,
+        strategies: Dict[str, ChatModelStrategy],
+        current_strategy: str,
+        current_model: str,
+        temperature: float,
+        max_tokens: int,
+        log_manager: LogManager,
+        chat_history_manager: ChatHistoryManager,
     ):
         self.strategies = strategies
         self.current_strategy = current_strategy

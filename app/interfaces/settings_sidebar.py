@@ -3,14 +3,23 @@ Implements the settings sidebar in the Streamlit app, allowing users to modify a
 as well as select the desired chat model and its parameters.
 """
 
+from typing import Dict
 import streamlit as st
 import json
+
+from chat_strategies.chat_model_strategy import ChatModelStrategy
+from managers.settings_manager import SettingsManager
 
 DIVIDER = ": "
 
 
 class SettingsSidebar:
-    def __init__(self, settings_manager, strategies):
+    def __init__(
+        self,
+        settings_manager: SettingsManager,
+        strategies: Dict[str, ChatModelStrategy],
+    ):
+
         self.settings_manager = settings_manager
         self.strategies = strategies
         self.models_list = self._create_models_list()

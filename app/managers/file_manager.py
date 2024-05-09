@@ -24,8 +24,12 @@ class FileManager:
         pass
 
     def _prepare_files_list(
-        self, folder_path, target_extensions, always_include, excluded_dirs
-    ):
+        self,
+        folder_path: str,
+        target_extensions: List[str],
+        always_include: List[str],
+        excluded_dirs: List[str],
+    ) -> List[Dict[str, Any]]:
 
         files_list = []
         for subdir, dirs, files in os.walk(folder_path):
@@ -44,7 +48,7 @@ class FileManager:
         return files_list
 
     def _augment_files_data(
-        self, files_data: List[Dict[str, str]]
+        self, files_data: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
         """
         Process a list of file dictionaries, reading content from each and augmenting the dictionary
@@ -77,8 +81,12 @@ class FileManager:
         return files_data
 
     def read_files(
-        self, folder_path, target_extensions, always_include, excluded_dirs
-    ) -> List[Dict[str, str]]:
+        self,
+        folder_path: str,
+        target_extensions: str,
+        always_include: str,
+        excluded_dirs: str,
+    ) -> List[Dict[str, Any]]:
         """
         Read files from a given directory and its subdirectories,
         filtering by file extensions, including specified always include files,

@@ -5,9 +5,11 @@ Implements the context tab in the Streamlit app, managing context files and disp
 import streamlit as st
 import pandas as pd
 
+from managers.file_manager import FileManager
+
 
 class ContextTab:
-    def __init__(self, file_manager):
+    def __init__(self, file_manager: FileManager):
         self.settings = st.session_state["settings"]
         self.file_manager = file_manager
 

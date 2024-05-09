@@ -2,17 +2,20 @@
 Manages the saving of chat histories.
 """
 
+from typing import List, Dict
 import os
 from datetime import datetime
 
 
 class ChatHistoryManager:
-    def __init__(self, directory="chat_histories"):
+    def __init__(self, directory: str = "chat_histories"):
         self.directory = directory
         if not os.path.exists(directory):
             os.makedirs(directory)
 
-    def save_chat_history(self, messages, filename=None):
+    def save_chat_history(
+        self, messages: List[Dict[str, str]], filename: str = None
+    ) -> str:
         if filename is None:
             filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".md"
         filepath = os.path.join(self.directory, filename)
@@ -21,7 +24,7 @@ class ChatHistoryManager:
             file.write(self._convert_messages_to_md(messages))
         return filepath
 
-    def _convert_messages_to_md(self, messages):
+    def _convert_messages_to_md(self, messages: List[Dict[str, str]]) -> str:
         md_content = (
             f"# Chat History {datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}\n\n"
         )

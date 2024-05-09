@@ -22,12 +22,12 @@ from chat_strategies.anthropic_strategy import AnthropicChatStrategy
 class StreamlitInterface:
     def __init__(
         self,
-        settings_manager,
-        log_manager,
-        file_manager,
-        chat_history_manager,
-        openai_api_key=None,
-        anthropic_api_key=None,
+        settings_manager: SettingsManager,
+        log_manager: LogManager,
+        file_manager: FileManager,
+        chat_history_manager: ChatHistoryManager,
+        openai_api_key: str = None,
+        anthropic_api_key: str = None,
     ):
         self.settings_manager = settings_manager
         self.log_manager = log_manager
