@@ -11,7 +11,7 @@ class LogTab:
     def __init__(self, log_manager: LogManager):
         self.log_manager = log_manager
 
-    def render(self):
+    def render(self) -> None:
         if "total_cost" in st.session_state:
             st.write(
                 f" Total cost: {st.session_state['total_cost']} $ (~{st.session_state['total_cost']*100:.2f} Rub)",

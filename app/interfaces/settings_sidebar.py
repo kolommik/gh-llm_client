@@ -24,7 +24,7 @@ class SettingsSidebar:
         self.strategies = strategies
         self.models_list = self._create_models_list()
 
-    def _create_models_list(self):
+    def _create_models_list(self) -> None:
         models_list = []
         for strategy_name, strategy in self.strategies.items():
             if strategy:
@@ -36,7 +36,7 @@ class SettingsSidebar:
                 )
         return models_list
 
-    def _handle_settings(self):
+    def _handle_settings(self) -> None:
         if "settings" not in st.session_state:
             st.session_state["settings"] = self.settings_manager.load_settings()
 
@@ -76,7 +76,7 @@ class SettingsSidebar:
             )
             st.sidebar.success(f"Настройки загружены из файла {settings_file.name}!")
 
-    def render(self):
+    def render(self) -> None:
         st.sidebar.title("Настройки")
         self._handle_settings()
 

@@ -6,7 +6,6 @@ and interacting with the selected chat strategy.
 from typing import Dict
 import streamlit as st
 import json
-
 from chat_strategies.chat_model_strategy import ChatModelStrategy
 from managers.chat_history_manager import ChatHistoryManager
 from managers.log_manager import LogManager
@@ -32,7 +31,7 @@ class ChatTab:
         self.log_manager = log_manager
         self.chat_history_manager = chat_history_manager
 
-    def render(self):
+    def render(self) -> None:
         if st.button("Очистить историю чата"):
             st.session_state["messages"] = []
             st.session_state["logs"] = []

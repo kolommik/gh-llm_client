@@ -13,7 +13,7 @@ class ContextTab:
         self.settings = st.session_state["settings"]
         self.file_manager = file_manager
 
-    def update_context(self):
+    def update_context(self) -> None:
         files = self.file_manager.read_files(
             folder_path=self.settings["folder_path"],
             target_extensions=self.settings["target_extensions"],
@@ -29,7 +29,7 @@ class ContextTab:
         else:
             st.session_state["update_context_key"] += 1
 
-    def display_files_info(self):
+    def display_files_info(self) -> None:
         st.write(
             "Total files:",
             sum([1 for _ in st.session_state["context"]]),
@@ -43,7 +43,7 @@ class ContextTab:
             sum([x["lines"] for x in st.session_state["context"]]),
         )
 
-    def render(self):
+    def render(self) -> None:
         if st.button("Обновить контекст"):
             self.update_context()
 
