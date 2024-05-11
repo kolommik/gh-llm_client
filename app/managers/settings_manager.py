@@ -2,7 +2,7 @@
 Handles the loading and saving of application settings, as well as providing default settings when necessary.
 """
 
-from typing import IO, Dict
+from typing import Dict, TextIO
 import os
 import json
 
@@ -37,7 +37,7 @@ class SettingsManager:
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(settings, f, indent=2, ensure_ascii=False)
 
-    def load_settings_from_file(self, file: IO[str]) -> Dict[str, str]:
+    def load_settings_from_file(self, file: TextIO) -> Dict[str, str]:
         """Load settings from a file-like object."""
         try:
             return json.load(file)

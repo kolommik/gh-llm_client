@@ -3,7 +3,7 @@ Implements the settings sidebar in the Streamlit app, allowing users to modify a
 as well as select the desired chat model and its parameters.
 """
 
-from typing import Dict
+from typing import Dict, Tuple
 import streamlit as st
 import json
 
@@ -23,6 +23,7 @@ class SettingsSidebar:
         self.settings_manager = settings_manager
         self.strategies = strategies
         self.models_list = self._create_models_list()
+        self.output_max_tokens: int = 0
 
     def _create_models_list(self) -> None:
         models_list = []
@@ -76,7 +77,7 @@ class SettingsSidebar:
             )
             st.sidebar.success(f"Настройки загружены из файла {settings_file.name}!")
 
-    def render(self) -> None:
+    def render(self) -> Tuple[str, str, float, int]:
         st.sidebar.title("Настройки")
         self._handle_settings()
 
