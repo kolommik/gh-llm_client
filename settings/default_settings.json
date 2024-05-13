@@ -1,7 +1,7 @@
 {
   "folder_path": "./app",
   "target_extensions": ".py",
-  "always_include": "README.md",
+  "always_include": "README.md, pyproject.toml",
   "excluded_dirs": ".vscode, .venv",
   "system_prompt": "You are a HIGH-END PYTHON PROGRAMMER.\nYou don't teach how to write programs, you write them.\nTAKE A DEEP BREATH.\nReturn only full script.\nI'll tip you 1000$ for a perfect answer.\nОтвечай на русском языке."
 }
