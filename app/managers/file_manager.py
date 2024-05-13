@@ -15,11 +15,37 @@ import tiktoken
 
 
 def num_tokens_from_content(content: str, model: str = "gpt-3.5-turbo") -> int:
+    """
+    Computes the number of tokens in the given text for the specified model.
+
+    Parameters
+    ----------
+    content : str
+        Text content.
+    model : str, optional
+        Model name. Default is "gpt-3.5-turbo".
+
+    Returns
+    -------
+    int
+        Number of tokens in the text.
+    """
     encoding = tiktoken.encoding_for_model(model)
     return len(encoding.encode(content))
 
 
 class FileManager:
+    """
+    Class for managing file operations.
+
+    Methods
+    -------
+    read_files(folder_path: str, target_extensions: str, always_include: str, excluded_dirs: str)
+        -> List[Dict[str, Any]]
+        Reads files from the specified directory and its subdirectories, filtering by file extensions,
+        including specified always-included files, and excluding specified directories.
+    """
+
     def __init__(self):
         pass
 
@@ -30,7 +56,25 @@ class FileManager:
         always_include: List[str],
         excluded_dirs: List[str],
     ) -> List[Dict[str, Any]]:
+        """
+        Prepares a list of files for processing.
 
+        Parameters
+        ----------
+        folder_path : str
+            Path to the directory.
+        target_extensions : List[str]
+            List of target file extensions.
+        always_include : List[str]
+            List of files that should always be included.
+        excluded_dirs : List[str]
+            List of directories to be excluded.
+
+        Returns
+        -------
+        List[Dict[str, Any]]
+            List of dictionaries representing files.
+        """
         files_list = []
         for subdir, dirs, files in os.walk(folder_path):
             dirs[:] = [d for d in dirs if d not in excluded_dirs]
@@ -51,26 +95,22 @@ class FileManager:
         self, files_data: List[Dict[str, Any]]
     ) -> List[Dict[str, Any]]:
         """
-        Process a list of file dictionaries, reading content from each and augmenting the dictionary
-        with the length of content, the number of words, and the number of tokens.
+        Processes a list of file dictionaries, reads the content of each file, and augments the dictionary
+        with content length, word count, and token count.
 
         Parameters
         ----------
-        files_data : list of dict
-            A list of dictionaries, each containing 'path', 'filename', and 'content' keys.
+        files_data : List[Dict[str, Any]]
+            List of dictionaries, each containing keys 'path', 'filename', and 'content'.
 
         Returns
         -------
-        list of dict
+        List[Dict[str, Any]]
             The same list of dictionaries, but each dictionary is augmented with 'length' (number of characters),
-            'words' (number of words), and 'tokens' (number of tokens using num_tokens_from_content) fields.
-
-        Notes
-        -----
-        This function assumes that the content of each file is text and uses the 'num_tokens_from_content' function
-        to calculate the number of tokens according to a specific model's encoding.
-
+            'words' (number of words), 'lines' (number of lines) and
+            'tokens' (number of tokens, computed using the num_tokens_from_content function).
         """
+
         for file_dict in files_data:
             content = file_dict["content"]
             file_dict["length"] = len(content)
@@ -88,9 +128,24 @@ class FileManager:
         excluded_dirs: str,
     ) -> List[Dict[str, Any]]:
         """
-        Read files from a given directory and its subdirectories,
-        filtering by file extensions, including specified always include files,
-        and excluding specified directories.
+        Reads files from the specified directory and its subdirectories, filtering by file extensions,
+        including specified always-included files, and excluding specified directories.
+
+        Parameters
+        ----------
+        folder_path : str
+            Path to the directory.
+        target_extensions : str
+            String with target file extensions, separated by commas.
+        always_include : str
+            String with names of files that should always be included, separated by commas.
+        excluded_dirs : str
+            String with names of directories to be excluded, separated by commas.
+
+        Returns
+        -------
+        List[Dict[str, Any]]
+            List of dictionaries representing files with additional information.
         """
         folder_path = os.path.abspath(folder_path)
         target_extensions = target_extensions.split(", ")

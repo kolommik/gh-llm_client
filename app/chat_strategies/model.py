@@ -6,6 +6,32 @@ This class is used by the chat model strategies to store and access model-specif
 
 
 class Model:
+    """
+    Represents a chat model with its associated properties.
+
+    Parameters
+    ----------
+    name : str
+        The name of the model.
+    output_max_tokens : int
+        The maximum number of output tokens the model can generate.
+    price_input : float
+        The price per input token for the model.
+    price_output : float
+        The price per output token for the model.
+
+    Attributes
+    ----------
+    name : str
+        The name of the model.
+    output_max_tokens : int
+        The maximum number of output tokens the model can generate.
+    price_input : float
+        The price per input token for the model.
+    price_output : float
+        The price per output token for the model.
+    """
+
     def __init__(
         self, name: str, output_max_tokens: int, price_input: float, price_output: float
     ):

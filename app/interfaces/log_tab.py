@@ -8,10 +8,26 @@ from managers.log_manager import LogManager
 
 
 class LogTab:
+    """Class representing the log tab in the Streamlit app.
+
+    Parameters
+    ----------
+    log_manager : LogManager
+        Instance of the LogManager class for managing logs.
+
+    Methods
+    -------
+    render()
+        Renders the log tab in the Streamlit app.
+    """
+
     def __init__(self, log_manager: LogManager):
         self.log_manager = log_manager
 
     def render(self) -> None:
+        """
+        Renders the log tab in the Streamlit app.
+        """
         if "total_cost" in st.session_state:
             st.write(
                 f" Total cost: {st.session_state['total_cost']} $ (~{st.session_state['total_cost']*100:.2f} Rub)",

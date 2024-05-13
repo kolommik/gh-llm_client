@@ -14,6 +14,28 @@ DIVIDER = ": "
 
 
 class SettingsSidebar:
+    """Class representing the settings sidebar in the Streamlit app.
+
+    Parameters
+    ----------
+    settings_manager : SettingsManager
+        Instance of the SettingsManager class for managing settings.
+    strategies : Dict[str, ChatModelStrategy]
+        Dictionary mapping strategy names to ChatModelStrategy instances.
+
+    Attributes
+    ----------
+    models_list : List[str]
+        List of available chat models.
+    output_max_tokens : int
+        Maximum number of output tokens for the selected model.
+
+    Methods
+    -------
+    render() -> Tuple[str, str, float, int]
+        Renders the settings sidebar and returns the selected strategy, model, temperature, and max tokens.
+    """
+
     def __init__(
         self,
         settings_manager: SettingsManager,
@@ -26,6 +48,9 @@ class SettingsSidebar:
         self.output_max_tokens: int = 0
 
     def _create_models_list(self) -> None:
+        """
+        Creates a list of available chat models.
+        """
         models_list = []
         for strategy_name, strategy in self.strategies.items():
             if strategy:
@@ -38,10 +63,14 @@ class SettingsSidebar:
         return models_list
 
     def _handle_settings(self) -> None:
+        """
+        Handles the settings in the sidebar, including loading, saving, and updating settings.
+        """
         if "settings" not in st.session_state:
             st.session_state["settings"] = self.settings_manager.load_settings()
 
         if st.sidebar.button("Сохранить настройки по умолчанию"):
+            # Save default settings
             new_settings = {
                 "folder_path": st.session_state.settings["folder_path"],
                 "target_extensions": st.session_state.settings["target_extensions"],
@@ -52,7 +81,7 @@ class SettingsSidebar:
             self.settings_manager.save_settings(new_settings)
             st.sidebar.success("Настройки сохранены!")
 
-            # Предложить скачать файл с настройками
+            # Offer to download settings file
             settings_json = json.dumps(new_settings, ensure_ascii=False, indent=2)
             st.sidebar.download_button(
                 label="Скачать файл настроек",
@@ -72,12 +101,21 @@ class SettingsSidebar:
         )
 
         if settings_file is not None:
+            # Load settings from uploaded file
             st.session_state["settings"] = (
                 self.settings_manager.load_settings_from_file(settings_file)
             )
             st.sidebar.success(f"Настройки загружены из файла {settings_file.name}!")
 
     def render(self) -> Tuple[str, str, float, int]:
+        """
+        Renders the settings sidebar and returns the selected strategy, model, temperature, and max tokens.
+
+        Returns
+        -------
+        Tuple[str, str, float, int]
+            A tuple containing the selected strategy, model, temperature, and max tokens.
+        """
         st.sidebar.title("Настройки")
         self._handle_settings()
 
@@ -86,6 +124,7 @@ class SettingsSidebar:
         # -----------------------------------------------
         st.sidebar.write("---")
 
+        # Display and update settings fields
         st.session_state.settings["folder_path"] = st.sidebar.text_input(
             "Folder path",
             st.session_state.settings.get("folder_path", ""),
@@ -117,8 +156,10 @@ class SettingsSidebar:
             help="Системная подсказка для LLM",
         )
 
+        # -----------------------------------------------
         st.sidebar.write("---")
 
+        # Select chat model
         chosen_model = st.sidebar.selectbox(
             "Model name",
             (self.models_list),
@@ -130,6 +171,7 @@ class SettingsSidebar:
             current_strategy
         ].get_output_max_tokens(current_model)
 
+        # Select temperature and max tokens
         temperature = st.sidebar.slider(
             "Temperature",
             0.0,

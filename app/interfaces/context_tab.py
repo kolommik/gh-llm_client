@@ -9,11 +9,31 @@ from managers.file_manager import FileManager
 
 
 class ContextTab:
+    """Class representing the context tab in the Streamlit app.
+
+    Parameters
+    ----------
+    file_manager : FileManager
+        Instance of the FileManager class for managing files.
+
+    Methods
+    -------
+    update_context()
+        Updates the context by reading files based on the settings.
+    display_files_info()
+        Displays information about the context files.
+    render()
+        Renders the context tab in the Streamlit app.
+    """
+
     def __init__(self, file_manager: FileManager):
         self.settings = st.session_state["settings"]
         self.file_manager = file_manager
 
     def update_context(self) -> None:
+        """
+        Updates the context by reading files based on the settings.
+        """
         files = self.file_manager.read_files(
             folder_path=self.settings["folder_path"],
             target_extensions=self.settings["target_extensions"],
@@ -30,6 +50,9 @@ class ContextTab:
             st.session_state["update_context_key"] += 1
 
     def display_files_info(self) -> None:
+        """
+        Displays information about the context files.
+        """
         st.write(
             "Total files:",
             sum([1 for _ in st.session_state["context"]]),
@@ -44,7 +67,11 @@ class ContextTab:
         )
 
     def render(self) -> None:
+        """
+        Renders the context tab in the Streamlit app.
+        """
         if st.button("Обновить контекст"):
+            # Update context when the button is clicked
             self.update_context()
 
         if "context" in st.session_state:
@@ -54,6 +81,7 @@ class ContextTab:
                 else 0
             )
 
+            # Display file list with enable/disable options
             st.session_state["files_list"] = st.data_editor(
                 pd.DataFrame(
                     [
@@ -66,10 +94,10 @@ class ContextTab:
                         for item in st.session_state["full_context"]
                     ]
                 ),
-                disabled=["path", "tokens", "lines"],
+                disabled=["Path", "Tokens", "Lines"],
                 key=update_context_key,
             )
-
+            # Filter context based on enabled files
             enabled_paths = st.session_state["files_list"][
                 st.session_state["files_list"]["Enable"]
             ]["Path"].tolist()
@@ -79,7 +107,7 @@ class ContextTab:
                 for item in st.session_state["full_context"]
                 if item["path"] in enabled_paths
             ]
-
+            # Display files information
             self.display_files_info()
 
         with st.expander("System prompt", expanded=False):

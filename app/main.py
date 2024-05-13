@@ -20,6 +20,30 @@ from chat_strategies.anthropic_strategy import AnthropicChatStrategy
 
 
 class StreamlitInterface:
+    """
+    Class representing the Streamlit interface for the chat application.
+
+    Parameters
+    ----------
+    settings_manager : SettingsManager
+        Instance of the SettingsManager class for managing application settings.
+    log_manager : LogManager
+        Instance of the LogManager class for managing logs.
+    file_manager : FileManager
+        Instance of the FileManager class for managing files.
+    chat_history_manager : ChatHistoryManager
+        Instance of the ChatHistoryManager class for managing chat history.
+    openai_api_key : str, optional
+        OpenAI API key. Default is None.
+    anthropic_api_key : str, optional
+        Anthropic API key. Default is None.
+
+    Methods
+    -------
+    run()
+        Runs the Streamlit interface.
+    """
+
     def __init__(
         self,
         settings_manager: SettingsManager,
@@ -47,6 +71,9 @@ class StreamlitInterface:
         }
 
     def run(self):
+        """
+        Runs the Streamlit interface.
+        """
         st.set_page_config(page_title="Chat App", layout="wide")
 
         # Settings sidebar ==========================================
