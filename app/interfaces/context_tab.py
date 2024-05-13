@@ -70,7 +70,7 @@ class ContextTab:
         """
         Renders the context tab in the Streamlit app.
         """
-        if st.button("Обновить контекст"):
+        if st.button("Update context"):
             # Update context when the button is clicked
             self.update_context()
 

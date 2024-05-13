@@ -58,7 +58,7 @@ class StreamlitInterface:
         self.chat_history_manager = chat_history_manager
         self.file_manager = file_manager
 
-        # TODO - обработка ошибки если список моделей пуст, т.к. нет env ключей
+        # TODO - handle error if model list is empty due to missing env keys
         self.strategies = {
             "OpenAI": (
                 OpenAIChatStrategy(api_key=openai_api_key) if openai_api_key else None
@@ -82,7 +82,7 @@ class StreamlitInterface:
         )
 
         # Main interface ============================================
-        tab1, tab2, tab3 = st.tabs(["📚 Контекст", "💬 Чат", "📜 Лог"])
+        tab1, tab2, tab3 = st.tabs(["📚 Context", "💬 Chat", "📜 Log"])
 
         with tab1:
             ContextTab(self.file_manager).render()

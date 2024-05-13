@@ -69,7 +69,7 @@ class SettingsSidebar:
         if "settings" not in st.session_state:
             st.session_state["settings"] = self.settings_manager.load_settings()
 
-        if st.sidebar.button("Сохранить настройки по умолчанию"):
+        if st.sidebar.button("Save default settings"):
             # Save default settings
             new_settings = {
                 "folder_path": st.session_state.settings["folder_path"],
@@ -79,25 +79,25 @@ class SettingsSidebar:
                 "system_prompt": st.session_state.settings["system_prompt"],
             }
             self.settings_manager.save_settings(new_settings)
-            st.sidebar.success("Настройки сохранены!")
+            st.sidebar.success("Settings saved!")
 
             # Offer to download settings file
             settings_json = json.dumps(new_settings, ensure_ascii=False, indent=2)
             st.sidebar.download_button(
-                label="Скачать файл настроек",
+                label="Download settings file",
                 data=settings_json,
                 file_name="settings.json",
                 mime="application/json",
             )
 
-        if st.sidebar.button("Загрузить настройки по умолчанию"):
+        if st.sidebar.button("Load default settings"):
             st.session_state["settings"] = self.settings_manager.load_settings()
-            st.sidebar.success("Настройки загружены!")
+            st.sidebar.success("Settings loaded!")
 
         settings_file = st.sidebar.file_uploader(
-            "Выберите файл настроек",
+            "Select settings file",
             type=["json"],
-            help="Загрузить локальный файл JSON с настройками",
+            help="Upload a local JSON settings file",
         )
 
         if settings_file is not None:
@@ -105,7 +105,7 @@ class SettingsSidebar:
             st.session_state["settings"] = (
                 self.settings_manager.load_settings_from_file(settings_file)
             )
-            st.sidebar.success(f"Настройки загружены из файла {settings_file.name}!")
+            st.sidebar.success(f"Settings loaded from file {settings_file.name}!")
 
     def render(self) -> Tuple[str, str, float, int]:
         """
@@ -129,31 +129,31 @@ class SettingsSidebar:
             "Folder path",
             st.session_state.settings.get("folder_path", ""),
             key=f"folder_path_{unique_key}",
-            help="Введите путь к директории",
+            help="Enter the directory path",
         )
         st.session_state.settings["target_extensions"] = st.sidebar.text_input(
             "Target extensions",
             st.session_state.settings.get("target_extensions", ""),
             key=f"target_extensions_{unique_key}",
-            help="Введите расширения через запятую, например: .py,.txt,.md",
+            help="Enter extensions separated by commas, e.g., .py,.txt,.md",
         )
         st.session_state.settings["always_include"] = st.sidebar.text_input(
             "Always include files",
             st.session_state.settings.get("always_include", ""),
             key=f"always_include_{unique_key}",
-            help="Введите имена файлов через запятую",
+            help="Enter file names separated by commas",
         )
         st.session_state.settings["excluded_dirs"] = st.sidebar.text_input(
             "Excluded directories",
             st.session_state.settings.get("excluded_dirs", ""),
             key=f"excluded_dirs_{unique_key}",
-            help="Введите директории через запятую",
+            help="Enter directories separated by commas",
         )
         st.session_state.settings["system_prompt"] = st.sidebar.text_area(
             "System prompt",
             st.session_state.settings.get("system_prompt", ""),
             key=f"system_prompt_{unique_key}",
-            help="Системная подсказка для LLM",
+            help="System prompt for LLM",
         )
 
         # -----------------------------------------------
@@ -163,7 +163,7 @@ class SettingsSidebar:
         chosen_model = st.sidebar.selectbox(
             "Model name",
             (self.models_list),
-            help="Выберите модель из доступных",
+            help="Select a model from the available options",
         )
 
         current_strategy, current_model = chosen_model.split(DIVIDER)
@@ -178,8 +178,8 @@ class SettingsSidebar:
             1.0,
             0.0,
             help="""
-            Параметр, контролирующий случайность ответов модели.
-            Значение 0 означает, что модель будет генерировать более предсказуемый и консистентный текст.""",
+            Parameter that controls the randomness of the model's responses.
+            A value of 0 means the model will generate more predictable and consistent text.""",
         )
         max_tokens = st.sidebar.number_input(
             "Max tokens",
@@ -188,8 +188,8 @@ class SettingsSidebar:
             value=self.output_max_tokens,
             step=100,
             help="""
-            Максимальное количество токенов, которое может быть сгенерировано в ответе.
-            Это помогает ограничить длину вывода.""",
+            The maximum number of tokens that can be generated in the response.
+            This helps limit the length of the output.""",
         )
 
         return current_strategy, current_model, temperature, max_tokens

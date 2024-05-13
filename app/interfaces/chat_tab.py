@@ -60,18 +60,18 @@ class ChatTab:
         """
         Renders the chat tab in the Streamlit app.
         """
-        if st.button("Очистить историю чата"):
+        if st.button("Clear chat history"):
             # Clear chat history and logs
             st.session_state["messages"] = []
             st.session_state["logs"] = []
             st.session_state["total_cost"] = 0.0
 
-        if st.button("Сохранить чат"):
+        if st.button("Save chat"):
             # Save chat history to a file
             filepath = self.chat_history_manager.save_chat_history(
                 st.session_state.messages
             )
-            st.success(f"Чат сохранен в файл: {filepath}")
+            st.success(f"Chat saved to file: {filepath}")
 
         if "messages" not in st.session_state:
             st.session_state["messages"] = []
@@ -142,7 +142,6 @@ class ChatTab:
                     f" Price: {total_price} $ (~{total_price*100:.2f} Rub)",
                 ]
             )
-
             # Log chat information
             self.log_manager.add_log(f"{self.current_strategy} - {self.current_model}")
             self.log_manager.add_log(
