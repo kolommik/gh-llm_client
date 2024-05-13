@@ -55,6 +55,12 @@ class OpenAIChatStrategy(ChatModelStrategy):
         self.api_key = api_key
         self.models = [
             Model(
+                name="gpt-4o",
+                output_max_tokens=4096,
+                price_input=5.0,
+                price_output=15.0,
+            ),
+            Model(
                 name="gpt-4-turbo",
                 output_max_tokens=4096,
                 price_input=10.0,
