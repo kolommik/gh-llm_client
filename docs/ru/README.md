@@ -1,6 +1,6 @@
 # LLM Streamlit Chat
 
-[English](docs/en/README.md) | [Русский](docs/ru/README.md)
+[English](../en/README.md) | [Русский](README.md)
 
 ## Описание
 
@@ -19,4 +19,4 @@ LLM Streamlit Chat - это приложение для чата, использ
 
 ## Установка и настройка
 
-См. [INSTALLATION.md](docs/ru/INSTALLATION.md) для получения подробной информации о том, как установить и настроить проект.
+См. [INSTALLATION.md](INSTALLATION.md) для получения подробной информации о том, как установить и настроить проект.

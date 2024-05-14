@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "my-streamlit-app"
-version = "0.1.0"
+name = "LLM Streamlit Chat"
+version = "1.0.0"
 description = ""
 authors = ["kolommik <mikhail.kolomasov@gmail.com>"]
 readme = "README.md"
