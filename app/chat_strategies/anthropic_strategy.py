@@ -54,6 +54,12 @@ class AnthropicChatStrategy(ChatModelStrategy):
         self.api_key = api_key
         self.models = [
             Model(
+                name="claude-3-5-sonnet-20240620",
+                output_max_tokens=4096,
+                price_input=3.0,
+                price_output=15.0,
+            ),
+            Model(
                 name="claude-3-opus-20240229",
                 output_max_tokens=4096,
                 price_input=15.0,
