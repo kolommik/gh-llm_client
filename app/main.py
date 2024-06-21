@@ -17,6 +17,7 @@ from managers.settings_manager import SettingsManager
 from managers.chat_history_manager import ChatHistoryManager
 from chat_strategies.openai_strategy import OpenAIChatStrategy
 from chat_strategies.anthropic_strategy import AnthropicChatStrategy
+from chat_strategies.gemini_strategy import GeminiChatStrategy
 
 
 class StreamlitInterface:
@@ -52,6 +53,7 @@ class StreamlitInterface:
         chat_history_manager: ChatHistoryManager,
         openai_api_key: str = None,
         anthropic_api_key: str = None,
+        google_api_key: str = None,
     ):
         self.settings_manager = settings_manager
         self.log_manager = log_manager
@@ -67,6 +69,9 @@ class StreamlitInterface:
                 AnthropicChatStrategy(api_key=anthropic_api_key)
                 if anthropic_api_key
                 else None
+            ),
+            "Gemini": (
+                GeminiChatStrategy(api_key=google_api_key) if google_api_key else None
             ),
         }
 
@@ -107,6 +112,7 @@ if __name__ == "__main__":
     load_dotenv(find_dotenv())  # read local.env file
     openai_api_key = os.environ.get("OPENAI_API_KEY", None)
     anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", None)
+    google_api_key = os.environ.get("GOOGLE_API_KEY", None)
 
     settings_manager = SettingsManager()
     log_manager = LogManager()
@@ -120,5 +126,6 @@ if __name__ == "__main__":
         chat_history_manager,
         openai_api_key,
         anthropic_api_key,
+        google_api_key,
     )
     app.run()
