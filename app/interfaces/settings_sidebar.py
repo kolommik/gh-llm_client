@@ -6,6 +6,7 @@ as well as select the desired chat model and its parameters.
 from typing import Dict, Tuple
 import streamlit as st
 import json
+import os
 
 from chat_strategies.chat_model_strategy import ChatModelStrategy
 from managers.settings_manager import SettingsManager
@@ -69,8 +70,19 @@ class SettingsSidebar:
         if "settings" not in st.session_state:
             st.session_state["settings"] = self.settings_manager.load_settings()
 
-        if st.sidebar.button("Save default settings"):
-            # Save default settings
+        settings_files = [f for f in os.listdir("settings") if f.endswith(".json")]
+        selected_file = st.sidebar.selectbox(
+            "Select settings file",
+            settings_files,
+            index=(
+                settings_files.index("default_settings.json")
+                if "default_settings.json" in settings_files
+                else 0
+            ),
+        )
+
+        if st.sidebar.button("Save settings"):
+            # Save settings to the selected file
             new_settings = {
                 "folder_path": st.session_state.settings["folder_path"],
                 "target_extensions": st.session_state.settings["target_extensions"],
@@ -78,24 +90,28 @@ class SettingsSidebar:
                 "excluded_dirs": st.session_state.settings["excluded_dirs"],
                 "system_prompt": st.session_state.settings["system_prompt"],
             }
-            self.settings_manager.save_settings(new_settings)
-            st.sidebar.success("Settings saved!")
+            self.settings_manager.save_settings(
+                new_settings, filename=f"settings/{selected_file}"
+            )
+            st.sidebar.success(f"Settings saved to {selected_file}!")
 
             # Offer to download settings file
             settings_json = json.dumps(new_settings, ensure_ascii=False, indent=2)
             st.sidebar.download_button(
                 label="Download settings file",
                 data=settings_json,
-                file_name="settings.json",
+                file_name=selected_file,
                 mime="application/json",
             )
 
-        if st.sidebar.button("Load default settings"):
-            st.session_state["settings"] = self.settings_manager.load_settings()
-            st.sidebar.success("Settings loaded!")
+        if st.sidebar.button("Load settings"):
+            st.session_state["settings"] = self.settings_manager.load_settings(
+                filename=f"settings/{selected_file}"
+            )
+            st.sidebar.success(f"Settings loaded from {selected_file}!")
 
         settings_file = st.sidebar.file_uploader(
-            "Select settings file",
+            "Upload settings file",
             type=["json"],
             help="Upload a local JSON settings file",
         )
