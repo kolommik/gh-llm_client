@@ -61,6 +61,12 @@ class OpenAIChatStrategy(ChatModelStrategy):
                 price_output=15.0,
             ),
             Model(
+                name="gpt-4o-mini",
+                output_max_tokens=4096,
+                price_input=0.15,
+                price_output=0.6,
+            ),
+            Model(
                 name="gpt-4-turbo",
                 output_max_tokens=4096,
                 price_input=10.0,
@@ -77,12 +83,6 @@ class OpenAIChatStrategy(ChatModelStrategy):
                 output_max_tokens=4096,
                 price_input=30.0,
                 price_output=60.0,
-            ),
-            Model(
-                name="gpt-4-32k",
-                output_max_tokens=4096,
-                price_input=60.0,
-                price_output=120.0,
             ),
         ]
         self.client = OpenAI(api_key=self.api_key)
