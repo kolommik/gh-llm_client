@@ -4,11 +4,11 @@
 
 ## Description
 
-LLM Streamlit Chat is a high-performance chat application that uses OpenAI, Google and Anthropic models to generate responses. The application provides a user-friendly interface for interacting with various chat model strategies and allows users to easily switch between them.
+LLM Streamlit Chat is a high-performance chat application that uses OpenAI, Google, Anthropic, DeepSeeker models to generate responses. The application provides a user-friendly interface for interacting with various chat model strategies and allows users to easily switch between them.
 
 ## Key Features
 
-- Support for OpenAI, Google and Anthropic models
+- Support for OpenAI, Google, Anthropic and DeepSeeker models
 - Customizable model parameters such as temperature and max tokens
 - Chat history and log management
 - Intuitive Streamlit-based interface
