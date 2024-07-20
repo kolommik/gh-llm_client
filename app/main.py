@@ -18,6 +18,7 @@ from managers.chat_history_manager import ChatHistoryManager
 from chat_strategies.openai_strategy import OpenAIChatStrategy
 from chat_strategies.anthropic_strategy import AnthropicChatStrategy
 from chat_strategies.gemini_strategy import GeminiChatStrategy
+from chat_strategies.deepseeker_strategy import DeepseekerChatStrategy
 
 
 class StreamlitInterface:
@@ -73,6 +74,11 @@ class StreamlitInterface:
             "Gemini": (
                 GeminiChatStrategy(api_key=google_api_key) if google_api_key else None
             ),
+            "Deepseeker": (
+                DeepseekerChatStrategy(api_key=deepseeker_api_key)
+                if deepseeker_api_key
+                else None
+            ),
         }
 
     def run(self):
@@ -113,6 +119,7 @@ if __name__ == "__main__":
     openai_api_key = os.environ.get("OPENAI_API_KEY", None)
     anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY", None)
     google_api_key = os.environ.get("GOOGLE_API_KEY", None)
+    deepseeker_api_key = os.environ.get("DEEPSEEKER_API_KEY", None)
 
     settings_manager = SettingsManager()
     log_manager = LogManager()
