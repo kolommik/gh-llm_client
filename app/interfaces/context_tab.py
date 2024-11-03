@@ -4,7 +4,6 @@ Implements the context tab in the Streamlit app, managing context files and disp
 
 import streamlit as st
 import pandas as pd
-
 from managers.file_manager import FileManager
 
 
@@ -74,6 +73,16 @@ class ContextTab:
             # Update context when the button is clicked
             self.update_context()
 
+        # Кнопка "Включить все"
+        if st.button("Include All"):
+            for item in st.session_state["full_context"]:
+                item["Enable"] = True
+
+        # Кнопка "Выключить все"
+        if st.button("Exclude all"):
+            for item in st.session_state["full_context"]:
+                item["Enable"] = False
+
         if "context" in st.session_state:
             update_context_key = (
                 st.session_state["update_context_key"]
@@ -89,7 +98,7 @@ class ContextTab:
                             "Path": item["path"],
                             "Tokens": item["tokens"],
                             "Lines": item["lines"],
-                            "Enable": True,
+                            "Enable": item.get("Enable", True),
                         }
                         for item in st.session_state["full_context"]
                     ]

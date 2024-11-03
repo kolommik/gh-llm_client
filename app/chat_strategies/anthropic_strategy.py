@@ -118,7 +118,7 @@ class AnthropicChatStrategy(ChatModelStrategy):
         # Токены чтения из кэша на 90% дешевле базовых входных токенов
         cache_read = (
             self.cache_read_tokens
-            * self.models[self.get_models().index(self.model)].price_output
+            * self.models[self.get_models().index(self.model)].price_input
             * 0.1
             / 1_000_000.0
         )

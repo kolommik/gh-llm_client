@@ -143,7 +143,7 @@ class OpenAIChatStrategy(ChatModelStrategy):
         # Токены чтения из кэша на 50% дешевле базовых входных токенов
         cache_read = (
             self.cache_read_tokens
-            * self.models[self.get_models().index(self.model)].price_output
+            * self.models[self.get_models().index(self.model)].price_input
             * 0.5
             / 1_000_000.0
         )
