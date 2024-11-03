@@ -85,6 +85,8 @@ class GeminiChatStrategy(ChatModelStrategy):
         self.client = None
         self.input_tokens = 0
         self.output_tokens = 0
+        self.cache_create_tokens = 0
+        self.cache_read_tokens = 0
         self.model = None
 
     def get_models(self) -> List[str]:
@@ -98,6 +100,12 @@ class GeminiChatStrategy(ChatModelStrategy):
 
     def get_output_tokens(self) -> int:
         return self.output_tokens
+
+    def get_cache_create_tokens(self) -> int:
+        return self.cache_create_tokens
+
+    def get_cache_read_tokens(self) -> int:
+        return self.cache_read_tokens
 
     def get_full_price(self) -> float:
         inputs = (

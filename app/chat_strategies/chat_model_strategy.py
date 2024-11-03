@@ -95,6 +95,30 @@ class ChatModelStrategy(ABC):
         pass
 
     @abstractmethod
+    def get_cache_create_tokens(self) -> int:
+        """
+        Returns the number of cashed input tokens used in the last API request.
+
+        Returns
+        -------
+        int
+            The number of cashed input tokens generated in the last API response.
+        """
+        pass
+
+    @abstractmethod
+    def get_cache_read_tokens(self) -> int:
+        """
+        Returns the number of used cashed tokens used in the last API request.
+
+        Returns
+        -------
+        int
+            The number of used cashed tokens generated in the last API response.
+        """
+        pass
+
+    @abstractmethod
     def get_full_price(self) -> float:
         """
         Calculates and returns the total price based on the input and output tokens.

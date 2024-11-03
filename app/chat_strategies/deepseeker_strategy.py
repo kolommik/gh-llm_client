@@ -9,6 +9,7 @@ from chat_strategies.model import Model
 from chat_strategies.chat_model_strategy import ChatModelStrategy
 
 
+# https://api-docs.deepseek.com/quick_start/pricing
 class DeepseekerChatStrategy(ChatModelStrategy):
     """
     A concrete strategy for interacting with the Deepseeker chat model API.
@@ -58,16 +59,12 @@ class DeepseekerChatStrategy(ChatModelStrategy):
                 price_input=0.14,
                 price_output=0.28,
             ),
-            Model(
-                name="deepseek-coder",
-                output_max_tokens=4096,
-                price_input=0.14,
-                price_output=0.28,
-            ),
         ]
         self.client = OpenAI(api_key=self.api_key, base_url="https://api.deepseek.com")
         self.input_tokens = 0
         self.output_tokens = 0
+        self.cache_create_tokens = 0
+        self.cache_read_tokens = 0
         self.model = None
 
     def get_models(self) -> List[str]:
@@ -82,6 +79,12 @@ class DeepseekerChatStrategy(ChatModelStrategy):
     def get_output_tokens(self) -> int:
         return self.output_tokens
 
+    def get_cache_create_tokens(self) -> int:
+        return self.cache_create_tokens
+
+    def get_cache_read_tokens(self) -> int:
+        return self.cache_read_tokens
+
     def get_full_price(self) -> float:
         inputs = (
             self.input_tokens
@@ -93,7 +96,21 @@ class DeepseekerChatStrategy(ChatModelStrategy):
             * self.models[self.get_models().index(self.model)].price_output
             / 1_000_000.0
         )
-        return inputs + outputs
+        # Токены записи в кэш стоят столько же как входные токены
+        cache_create = (
+            self.cache_create_tokens
+            * self.models[self.get_models().index(self.model)].price_input
+            / 1_000_000.0
+        )
+        # Токены чтения из кэша на 90% дешевле базовых входных токенов
+        cache_read = (
+            self.cache_read_tokens
+            * self.models[self.get_models().index(self.model)].price_output
+            * 0.1
+            / 1_000_000.0
+        )
+
+        return inputs + outputs + cache_create + cache_read
 
     def send_message(
         self,
@@ -118,7 +135,10 @@ class DeepseekerChatStrategy(ChatModelStrategy):
             presence_penalty=0,
         )
 
-        self.input_tokens = response.usage.prompt_tokens
         self.output_tokens = response.usage.completion_tokens
+        self.cache_create_tokens = response.usage.prompt_cache_miss_tokens
+        self.cache_read_tokens = response.usage.prompt_cache_hit_tokens
+        self.input_tokens = response.usage.prompt_tokens - self.cache_create_tokens - self.cache_read_tokens
+        print(response.usage)
 
         return response.choices[0].message.content

@@ -54,22 +54,16 @@ class AnthropicChatStrategy(ChatModelStrategy):
         self.api_key = api_key
         self.models = [
             Model(
-                name="claude-3-5-sonnet-20240620",
-                output_max_tokens=4096,
+                name="claude-3-5-sonnet-latest",
+                output_max_tokens=8192,
                 price_input=3.0,
                 price_output=15.0,
             ),
             Model(
-                name="claude-3-opus-20240229",
+                name="claude-3-opus-latest",
                 output_max_tokens=4096,
                 price_input=15.0,
                 price_output=75.0,
-            ),
-            Model(
-                name="claude-3-sonnet-20240229",
-                output_max_tokens=4096,
-                price_input=3.0,
-                price_output=15.0,
             ),
             Model(
                 name="claude-3-haiku-20240307",
@@ -81,66 +75,29 @@ class AnthropicChatStrategy(ChatModelStrategy):
         self.client = Anthropic(api_key=self.api_key)
         self.input_tokens = 0
         self.output_tokens = 0
+        self.cache_create_tokens = 0
+        self.cache_read_tokens = 0
         self.model = None
 
     def get_models(self) -> List[str]:
-        """
-        Returns a list of available model names.
-
-        Returns
-        -------
-        List[str]
-            A list of available model names.
-        """
         return [model.name for model in self.models]
 
     def get_output_max_tokens(self, model_name: str) -> int:
-        """
-        Returns the maximum number of output tokens for the specified model.
-
-        Parameters
-        ----------
-        model_name : str
-            The name of the model.
-
-        Returns
-        -------
-        int
-            The maximum number of output tokens for the specified model.
-        """
         return self.models[self.get_models().index(model_name)].output_max_tokens
 
     def get_input_tokens(self) -> int:
-        """
-        Returns the number of input tokens used in the last API request.
-
-        Returns
-        -------
-        int
-            The number of input tokens used in the last API request.
-        """
         return self.input_tokens
 
     def get_output_tokens(self) -> int:
-        """
-        Returns the number of output tokens generated in the last API response.
-
-        Returns
-        -------
-        int
-            The number of output tokens generated in the last API response.
-        """
         return self.output_tokens
 
-    def get_full_price(self) -> float:
-        """
-        Calculates and returns the total price based on the input and output tokens.
+    def get_cache_create_tokens(self) -> int:
+        return self.cache_create_tokens
 
-        Returns
-        -------
-        float
-            The total price based on the input and output tokens.
-        """
+    def get_cache_read_tokens(self) -> int:
+        return self.cache_read_tokens
+
+    def get_full_price(self) -> float:
         inputs = (
             self.input_tokens
             * self.models[self.get_models().index(self.model)].price_input
@@ -151,7 +108,22 @@ class AnthropicChatStrategy(ChatModelStrategy):
             * self.models[self.get_models().index(self.model)].price_output
             / 1_000_000.0
         )
-        return inputs + outputs
+        # Токены записи в кэш на 25% дороже базовых входных токенов
+        cache_create = (
+            self.cache_create_tokens
+            * self.models[self.get_models().index(self.model)].price_input
+            * 1.25
+            / 1_000_000.0
+        )
+        # Токены чтения из кэша на 90% дешевле базовых входных токенов
+        cache_read = (
+            self.cache_read_tokens
+            * self.models[self.get_models().index(self.model)].price_output
+            * 0.1
+            / 1_000_000.0
+        )
+
+        return inputs + outputs + cache_create + cache_read
 
     def send_message(
         self,
@@ -161,33 +133,36 @@ class AnthropicChatStrategy(ChatModelStrategy):
         max_tokens: int,
         temperature: float = 0,
     ) -> str:
-        """
-        Sends a message to the Anthropic API and returns the generated response.
 
-        Parameters
-        ----------
-        system_prompt : str
-            The system prompt to provide context for the conversation.
-        messages : List[Dict[str, str]]
-            A list of messages in the conversation, each represented as a dictionary.
-        model_name : str
-            The name of the model to use for generating the response.
-        max_tokens : int
-            The maximum number of tokens to generate in the response.
-        temperature : float, optional
-            The temperature value to control the randomness of the generated response, by default 0.
-
-        Returns
-        -------
-        str
-            The generated response from the Anthropic API.
-        """
         self.model = model_name
 
-        response = self.client.messages.create(
+        cashed_messages = []
+        message_count = len(messages)
+        used_cashed_control_breakpoints = 0
+        for i, message in enumerate(messages):
+            new_message = {
+                "role": message["role"],
+                "content": [
+                    {
+                        "type": "text",
+                        "text": message["content"],
+                    }
+                ],
+            }
+            # Добавляем cache_control к 0 сообщению и последним 3м
+            if (
+                (i == 0 or i >= message_count - 6)
+                and used_cashed_control_breakpoints < 4
+                and message["role"] == "user"
+            ):
+                used_cashed_control_breakpoints += 1
+                new_message["content"][0]["cache_control"] = {"type": "ephemeral"}
+            cashed_messages.append(new_message)
+
+        response = self.client.beta.prompt_caching.messages.create(
             model=model_name,
-            messages=messages,
             system=system_prompt,
+            messages=cashed_messages,
             temperature=temperature,
             max_tokens=max_tokens,
             top_p=1,
@@ -195,5 +170,8 @@ class AnthropicChatStrategy(ChatModelStrategy):
 
         self.input_tokens = response.usage.input_tokens
         self.output_tokens = response.usage.output_tokens
+        self.cache_create_tokens = response.usage.cache_creation_input_tokens
+        self.cache_read_tokens = response.usage.cache_read_input_tokens
+        # print(response.usage)
 
         return response.content[0].text

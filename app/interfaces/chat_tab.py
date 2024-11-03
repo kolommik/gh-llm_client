@@ -127,6 +127,12 @@ class ChatTab:
             # Get token counts and price from the chat strategy
             input_tokens = self.strategies[self.current_strategy].get_input_tokens()
             output_tokens = self.strategies[self.current_strategy].get_output_tokens()
+            cache_create_tokens = self.strategies[
+                self.current_strategy
+            ].get_cache_create_tokens()
+            cache_read_tokens = self.strategies[
+                self.current_strategy
+            ].get_cache_read_tokens()
             total_price = self.strategies[self.current_strategy].get_full_price()
 
             # Update total cost in session state
@@ -138,14 +144,18 @@ class ChatTab:
             # Display token counts and price
             st.write(
                 [
-                    f"input_tokens: {input_tokens},output_tokens: {output_tokens}.",
-                    f" Price: {total_price} $ (~{total_price*100:.2f} Rub)",
+                    f"Input_tokens: {input_tokens},Output_tokens: {output_tokens}",
+                    f"Cache_create_tokens: {cache_create_tokens}, Cache_read_tokens: {cache_read_tokens}",
+                    f"Price: {total_price} $ (~{total_price*100:.2f} Rub)",
                 ]
             )
             # Log chat information
             self.log_manager.add_log(f"{self.current_strategy} - {self.current_model}")
             self.log_manager.add_log(
-                f"input_tokens: {input_tokens},output_tokens: {output_tokens}."
+                f"Input_tokens: {input_tokens},Output_tokens: {output_tokens}"
+            )
+            self.log_manager.add_log(
+                f"Cache_create_tokens: {cache_create_tokens}, Cache_read_tokens: {cache_read_tokens}"
             )
             self.log_manager.add_log(
                 f" Price: {total_price} $ (~{total_price*100:,.3} Rub)"
