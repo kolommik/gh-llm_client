@@ -51,34 +51,45 @@ class GeminiChatStrategy(ChatModelStrategy):
 
     # Gemini 1.5 Pro - models/gemini-1.5-pro
     # Price (input)
-    # $3.50 / 1 million tokens (for prompts up to 128K tokens)
-    # $7.00 / 1 million tokens (for prompts longer than 128K)
+    # $1.25 / 1 million tokens (for prompts up to 128K tokens)
+    # $2.50 / 1 million tokens (for prompts longer than 128K tokens)
     # Price (output)
-    # $10.50 / 1 million tokens (for prompts up to 128K tokens)
-    # $21.00 / 1 million tokens (for prompts longer than 128K)
+    # $5.00 / 1 million tokens (for prompts up to 128K tokens)
+    # $10.00 / 1 million tokens (for prompts longer than 128K tokens)
+    # Context Caching
+    # $0.3125 / 1 million tokens (for prompts up to 128K tokens)
+    # $0.625 / 1 million tokens (for prompts longer than 128K tokens)
+    # Context Caching (storage)
+    # $4.50 / 1 million tokens per hour
 
     # Gemini 1.5 Flash - models/gemini-1.5-flash
     # Price (input)
-    # $0.35 / 1 million tokens (for prompts up to 128K tokens)
-    # $0.70 / 1 million tokens (for prompts longer than 128K)
+    # $0.075 / 1 million tokens (for prompts up to 128K tokens)
+    # $0.15 / 1 million tokens (for prompts longer than 128K tokens)
     # Price (output)
-    # $1.05 / 1 million tokens (for prompts up to 128K tokens)
-    # $2.10 / 1 million tokens (for prompts longer than 128K)
+    # $0.30 / 1 million tokens (for prompts up to 128K tokens)
+    # $0.60 / 1 million tokens (for prompts longer than 128K tokens)
+    # Context Caching
+    # $0.01875 / 1 million tokens (for prompts up to 128K tokens)
+    # $0.0375 / 1 million tokens (for prompts longer than 128K tokens)
+    # Context caching (storage)
+    # $1.00 / 1 million tokens per hour
+
     def __init__(self, api_key: str):
         self.api_key = api_key
         genai.configure(api_key=self.api_key)
         self.models = [
             Model(
-                name="gemini-1.5-pro",
+                name="gemini-1.5-pro-002",
                 output_max_tokens=8192,
-                price_input=3.5,
-                price_output=10.5,
+                price_input=1.25,
+                price_output=5.0,
             ),
             Model(
-                name="gemini-1.5-flash",
+                name="gemini-1.5-flash-002",
                 output_max_tokens=8192,
-                price_input=0.35,
-                price_output=1.05,
+                price_input=0.075,
+                price_output=0.3,
             ),
         ]
 
