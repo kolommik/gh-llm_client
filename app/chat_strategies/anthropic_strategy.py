@@ -172,6 +172,5 @@ class AnthropicChatStrategy(ChatModelStrategy):
         self.output_tokens = response.usage.output_tokens
         self.cache_create_tokens = response.usage.cache_creation_input_tokens
         self.cache_read_tokens = response.usage.cache_read_input_tokens
-        # print(response.usage)
 
         return response.content[0].text

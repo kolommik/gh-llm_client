@@ -138,7 +138,10 @@ class DeepseekerChatStrategy(ChatModelStrategy):
         self.output_tokens = response.usage.completion_tokens
         self.cache_create_tokens = response.usage.prompt_cache_miss_tokens
         self.cache_read_tokens = response.usage.prompt_cache_hit_tokens
-        self.input_tokens = response.usage.prompt_tokens - self.cache_create_tokens - self.cache_read_tokens
-        print(response.usage)
+        self.input_tokens = (
+            response.usage.prompt_tokens
+            - self.cache_create_tokens
+            - self.cache_read_tokens
+        )
 
         return response.choices[0].message.content

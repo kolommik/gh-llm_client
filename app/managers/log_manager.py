@@ -2,6 +2,7 @@
 Manages the logging functionality, allowing the addition and retrieval of log messages with timestamps.
 """
 
+import os
 from typing import List
 import datetime
 
@@ -14,6 +15,8 @@ class LogManager:
     ----------
     logs : List[str]
         List of log messages.
+    log_file_path : str
+        Path to the log file.
 
     Methods
     -------
@@ -23,8 +26,11 @@ class LogManager:
         Returns a list of log messages.
     """
 
-    def __init__(self):
+    def __init__(self, log_file_path: str = "logs/app.log"):
         self.logs = []
+        self.log_file_path = log_file_path
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(log_file_path), exist_ok=True)
 
     def add_log(self, message: str) -> None:
         """
@@ -36,7 +42,12 @@ class LogManager:
             Log message.
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        self.logs.append(f"{timestamp} - {message}")
+        log_entry = f"{timestamp} - {message}"
+        self.logs.append(log_entry)
+
+        # Write the log entry to the file
+        with open(self.log_file_path, "a", encoding="utf-8") as log_file:
+            log_file.write(log_entry + "\n")
 
     def get_logs(self) -> List[str]:
         """

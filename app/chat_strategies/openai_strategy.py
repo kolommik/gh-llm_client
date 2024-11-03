@@ -178,6 +178,5 @@ class OpenAIChatStrategy(ChatModelStrategy):
         self.cache_create_tokens = 0
         self.cache_read_tokens = response.usage.prompt_tokens_details.cached_tokens
         self.input_tokens = response.usage.prompt_tokens - self.cache_read_tokens
-        print(response.usage)
 
         return response.choices[0].message.content
